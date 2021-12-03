@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [ main ]
+env:
+  go-version: '1.16.x'
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Go
+        uses: actions/setup-go@v2.1.4
+        with:
+          go-version: ${{ env.go-version }}
+      
+      - name: Check out code
+        uses: actions/checkout@v2
+        
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v2.5.2
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Go
+        uses: actions/setup-go@v2.1.4
+        with:
+          go-version: ${{ env.go-version }}
+          
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Redis Server in GitHub Actions
+        uses: supercharge/redis-github-action@1.1.0
+        
+      - name: Run tests.
+        env:
+          WWC_S3_ACCESS_KEY: "required"
+          WWC_S3_SECRET_KEY: "required"
+          WWC_S3_ENDPOINT: "required"
+          WWC_S3_REGION: "required"
+          WWC_S3_BUCKET: "required"
+        run: go test ./...
