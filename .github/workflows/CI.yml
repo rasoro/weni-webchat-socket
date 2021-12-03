@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+  workflow_dispatch:
+env:
+  go-version: '1.16.x'
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Go
+        uses: actions/setup-go@v2.1.4
+        with:
+          go-version: ${{ env.go-version }}
+      
+      - name: Check out code
+        uses: actions/checkout@v2
+        
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v2
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Go
+        uses: actions/setup-go@v2.1.4
+        with:
+          go-version: ${{ env.go-version }}
+          
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Redis Server in GitHub Actions
+        uses: supercharge/redis-github-action@1.1.0
+        
+      - name: Run tests.
+        run: go test ./...
